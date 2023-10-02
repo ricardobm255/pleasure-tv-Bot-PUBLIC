@@ -1,4 +1,4 @@
-'''Importamos las librerias  necesarias'''
+'''Import all libraries necessaries'''
 import logging
 import telebot
 import pyfiglet
@@ -11,13 +11,13 @@ logger = logging.getLogger(__name__)
 
 # Instantiate bot
 bot = telebot.TeleBot('6666929357:AAFk2Wd7K13VPV8P-KB8X1A0Uu9pa46AENc')
-word = pyfiglet.figlet_format('SERVER IS ONLINE')
+word = pyfiglet.figlet_format('SERVER ONLINE')
 print(word)
 
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
-    '''Funcion que da inicio al bot'''
+    '''Function that starts the bot.'''
     user_first_name = str(message.chat.first_name)
     # current_time = datetime.datetime.now().time()
     welcome_message = f"🎉Bienvenido {user_first_name}! \n🔍Escribe el título de la película que deseas buscar..."
@@ -29,7 +29,7 @@ def handle_start(message):
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
-    '''Funcion para buscar peliculas por el titulo y devuelve la informacion'''
+    '''Function that returns the Title movie information input by the user'''
     user_first_name = str(message.chat.first_name)
     user_input = message.text
     print(f"El usuario {user_first_name} esta buscando '{user_input}'")
@@ -47,7 +47,7 @@ def handle_message(message):
         # Set the query parameters
         params = {
             "api_key": api_key,
-            "query": user_input,  # Replace with the actual movie title
+            "query": user_input,  # Replace with input user movie title
             "language": "es",  # Set language to Spanish
             "page": 1  # Set the page number
         }
@@ -77,11 +77,11 @@ def handle_message(message):
             original_language = first_movie["original_language"]
             movie_id = first_movie["id"]
 
-            # Formatear la Sinopsis(overview) para q el mensaje no supere los 1024 characters
+            # Format overview for not superate limit at 1024 characters
             num_caract = 600
             substring = overview[:num_caract]
 
-            # Formatear el lenguaje original de la pelicula
+            # Format original lenguage to spanish
             def get_language_name(original_language):
                 language_names = {
                     "en": "Inglés",
@@ -99,7 +99,7 @@ def handle_message(message):
 
             language_name = get_language_name(original_language)
 
-            # Get the details of the movie
+            # Get details of the movie
             movie_details_endpoint = f"movie/{movie_id}"
             details_params = {
                 "api_key": api_key,
@@ -107,7 +107,6 @@ def handle_message(message):
             }
             details_response = requests.get(base_url + movie_details_endpoint,
                                             params=details_params, timeout=10.001)
-            # Raise an exception if an error occurs with the API request
             details_response.raise_for_status()
             details_data = details_response.json()
 
@@ -151,10 +150,10 @@ def handle_message(message):
             genre_names = [genre["name"] for genre in genres]
             formatted_genres = ' #'.join(genre_names)
 
-            # Extraer el valor de "runtime" de los datos de la primera pelicula
+            # Extract the runtime value (this return "runtime" in minutes)
             runtime_in_minutes = movie_details["runtime"]
 
-            # Convertir "runtaime" en horas y minutos
+            # Convert runtime (minutes) in hours and minutes
             hours, minutes = divmod(runtime_in_minutes, 60)
 
             def format_hours_minutes(hours, minutes):
@@ -175,7 +174,7 @@ def handle_message(message):
             # Make the API request
             response = requests.get(base_url + endpoint,
                                     params=params_en, timeout=10.001)
-            # Raise an exception if an error occurs with the API request English
+            # Raise an exception if an error occurs with the API request in English
             response.raise_for_status()
 
             # Get the JSON data from the response English
@@ -184,14 +183,14 @@ def handle_message(message):
             # Extract the list of movies from the response English
             results = data["results"]
 
-            # Get the first movie English
+            # Get the results of the first movie in English
             first_movie_english = results[0]
 
             poster_path = first_movie_english["poster_path"]
 
             # Evaluate what if the best quality image
             # Add the desired qualities in the order you want to check
-            qualities = ["w500"]  # Incluide "w780", "original"
+            qualities = ["w500", "w780", "original"] 
 
             # Construct the API endpoint URL for fetching the image details
             api_url = f"https://api.themoviedb.org/3/configuration?api_key={api_key}"
@@ -240,7 +239,7 @@ def handle_message(message):
                                f"▶️ DESCARGAR ▶️"'\n''\n'
                                f"⚠️ Subtítulos en los comentarios ⚠️")
                 bot.send_message(message.chat.id, message_torrent)
-                print("Busqueda completada!!!")
+                print("Busqueda completada!!!") # Print in console
             except telebot.apihelper.ApiException as err:
                 logger.error('BadRequest error: %s', err)
                 bot.send_message(
