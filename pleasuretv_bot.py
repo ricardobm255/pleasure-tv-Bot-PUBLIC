@@ -137,7 +137,7 @@ def handle_message(message):
 
             message_torrent ="Torrent Links:\n"
             for link, quality in torrent_links:
-                message_torrent += f"🥇 Quality: {quality}\n🔗 Torrent Link: {link}"'\n''\n'
+                message_torrent += f"🥇 Calidad: {quality}\n🔗 Torrent Link: {link}"'\n''\n'
             # Make the HTTP GET request to the API
             response = requests.get(
                 f"https://yts.mx/api/v2/movie_details.json?with_images=false&with_cast=true&imdb_id={imdb_id}", timeout=10.001)
