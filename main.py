@@ -1,5 +1,5 @@
 '''Import all libraries necessaries'''
-from flask import Flask, request
+#from flask import Flask, request
 import logging
 import json
 import telebot
@@ -18,7 +18,7 @@ word = pyfiglet.figlet_format('SERVER IS ONLINE')
 print(word)
 
 # Create Flask application
-app = Flask(__name__)
+'''app = Flask(__name__)
 
 @app.route('/bot', methods=['POST'])
 def handle_telegram_webhook():
@@ -31,7 +31,7 @@ def start_bot():
     bot.remove_webhook()
     bot.set_webhook(url='https://api.render.com/deploy/srv-ckdn9f5jhfbs73c8fkg0?key=0jpF1lvXQiQ')
     return "Bot is running"
-
+'''
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     '''Function that starts the bot.'''
@@ -287,5 +287,6 @@ def handle_message(message):
 
 
 bot.polling(none_stop=True)
-if __name__ == '__main__':
+'''if __name__ == '__main__':
     app.run(threaded=True)
+'''
