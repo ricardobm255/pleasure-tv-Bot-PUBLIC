@@ -1,5 +1,4 @@
-'''Import all libraries necessaries'''
-#from flask import Flask, request
+'''Import all libraries necessaries'''
 import logging
 import json
 import telebot
@@ -17,21 +16,6 @@ bot = telebot.TeleBot('6666929357:AAFk2Wd7K13VPV8P-KB8X1A0Uu9pa46AENc')
 word = pyfiglet.figlet_format('SERVER IS ONLINE')
 print(word)
 
-# Create Flask application
-'''app = Flask(__name__)
-
-@app.route('/bot', methods=['POST'])
-def handle_telegram_webhook():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "OK"
-
-# Start the bot by accessing this endpoint
-@app.route('/start', methods=['GET'])
-def start_bot():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://api.render.com/deploy/srv-ckdn9f5jhfbs73c8fkg0?key=0jpF1lvXQiQ')
-    return "Bot is running"
-'''
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     '''Function that starts the bot.'''
@@ -71,7 +55,7 @@ def handle_message(message):
         try:
             # Make the API request Spanish
             response = requests.get(base_url + endpoint,
-                                    params=params, timeout=10.001)
+                                    params=params, timeout=25)
             # Raise an exception if an error occurs with the API request
             response.raise_for_status()
 
@@ -123,7 +107,7 @@ def handle_message(message):
                     "language": "es"  # Set language to Spanish
                 }
                 details_response = requests.get(base_url + movie_details_endpoint,
-                                                params=details_params, timeout=10.001)
+                                                params=details_params, timeout=25)
                 details_response.raise_for_status()
                 details_data = json.loads(details_response.text)
 
@@ -137,7 +121,7 @@ def handle_message(message):
                 def get_torrent_links(imdb_id):
                     url = f"https://yts.mx/api/v2/list_movies.json?query_term={imdb_id}"
 
-                    response = requests.get(url, timeout=10.001)
+                    response = requests.get(url, timeout=25)
                     data = json.loads(response.text)
 
                     if "data" in data and "movies" in data["data"]:
@@ -158,7 +142,7 @@ def handle_message(message):
                 # Make the HTTP GET request to the API
 
                 response = requests.get(
-                    f"https://yts.mx/api/v2/movie_details.json?with_images=false&with_cast=true&imdb_id={imdb_id}", timeout=10.001)
+                    f"https://yts.mx/api/v2/movie_details.json?with_images=false&with_cast=true&imdb_id={imdb_id}", timeout=25)
 
                 # Check if the request was successful (status code 200)
                 response.raise_for_status()
@@ -191,7 +175,7 @@ def handle_message(message):
 
                 # Make the API request
                 response = requests.get(base_url + endpoint,
-                                        params=params_en, timeout=10.001)
+                                        params=params_en, timeout=25)
                 # Raise an exception if an error occurs with the API request in English
                 response.raise_for_status()
 
@@ -233,7 +217,7 @@ def handle_message(message):
                     image_url = f"{base_url}{quality}{poster_path}"
 
                     # Make a GET request to the image URL
-                    response = requests.get(image_url, timeout=10.001)
+                    response = requests.get(image_url, timeout=25)
 
                     # Check if the request was successful (status code 200) and the content type is an image
                     if response.status_code == 200 and response.headers.get("content-type", "").startswith("image/"):
