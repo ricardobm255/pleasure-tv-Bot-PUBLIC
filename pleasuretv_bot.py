@@ -255,10 +255,14 @@ def handle_message(message):
                 logger.error(
                     "No se encontraron resultados para la consulta del usuario.")
                 logger.error("Código de estado: %s", response.status_code)
-        except requests.exceptions.RequestException as err:
-            print(f"Error de solicitud: {err}")
+        except requests.exceptions.RequestException as error_json:
+            print(f"Error de solicitud: {error_json}")
+            bot.send_message(
+                        message.chat.id, 'Se produjo un error al procesar su solicitud. Por favor, inténtelo de nuevo.')
         except json.JSONDecodeError as err:
-            print(f"Error al decodificar JSON: {err}")
+            print(f"Error al decodificar JSON: {error_json}")
+            bot.send_message(
+                        message.chat.id, 'Se produjo un error al procesar su solicitud. Por favor, inténtelo de nuevo.')
 
     except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as error:
         logger.error(
