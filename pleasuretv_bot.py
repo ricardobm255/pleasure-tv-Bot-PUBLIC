@@ -3,6 +3,7 @@ import logging
 import telebot
 import pyfiglet
 import requests
+import json
 
 # Set up logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -51,15 +52,20 @@ def handle_message(message):
             "language": "es",  # Set language to Spanish
             "page": 1  # Set the page number
         }
+        
+        try:
+            # Make the API request Spanish
+            response = requests.get(base_url + endpoint,
+                                    params=params, timeout=10.001)
+            # Raise an exception if an error occurs with the API request
+            response.raise_for_status()
 
-        # Make the API request Spanish
-        response = requests.get(base_url + endpoint,
-                                params=params, timeout=10.001)
-        # Raise an exception if an error occurs with the API request
-        response.raise_for_status()
-
-        # Get the JSON data from the response
-        data = response.json()
+            # Get the JSON data from the response
+            data = json.loads(response.text)
+        except requests.exceptions.RequestException as e:
+            print(f"Error de solicitud: {e}")
+        except json.JSONDecodeError as e:
+            print(f"Error al decodificar JSON: {e}")
 
         # Extract the list of movies from the response
         results = data["results"]
@@ -105,10 +111,15 @@ def handle_message(message):
                 "api_key": api_key,
                 "language": "es"  # Set language to Spanish
             }
-            details_response = requests.get(base_url + movie_details_endpoint,
-                                            params=details_params, timeout=10.001)
-            details_response.raise_for_status()
-            details_data = details_response.json()
+            try:
+                details_response = requests.get(base_url + movie_details_endpoint,
+                                                params=details_params, timeout=10.001)
+                details_response.raise_for_status()
+                details_data = json.loads(details_response.text)
+            except requests.exceptions.RequestException as e:
+                print(f"Error de solicitud: {e}")
+            except json.JSONDecodeError as e:
+                print(f"Error al decodificar JSON: {e}")
 
             # Get the genres of the movie
             genres = details_data.get("genres")
@@ -119,8 +130,13 @@ def handle_message(message):
             # Extract torrents links
             def get_torrent_links(imdb_id):
                 url = f"https://yts.mx/api/v2/list_movies.json?query_term={imdb_id}"
-                response = requests.get(url, timeout=10.001)
-                data = response.json()
+                try:
+                    response = requests.get(url, timeout=10.001)
+                    data = json.loads(response.text)
+                except requests.exceptions.RequestException as e:
+                    print(f"Error de solicitud: {e}")
+                except json.JSONDecodeError as e:
+                    print(f"Error al decodificar JSON: {e}")
 
                 if "data" in data and "movies" in data["data"]:
                     movies = data["data"]["movies"]
@@ -138,13 +154,18 @@ def handle_message(message):
             for link, quality in torrent_links:
                 message_torrent += f"🥇 Calidad: {quality}\n🔗 Torrent Link: {link}"'\n''\n'
             # Make the HTTP GET request to the API
-            response = requests.get(
-                f"https://yts.mx/api/v2/movie_details.json?with_images=false&with_cast=true&imdb_id={imdb_id}", timeout=10.001)
+            try:
+                response = requests.get(
+                    f"https://yts.mx/api/v2/movie_details.json?with_images=false&with_cast=true&imdb_id={imdb_id}", timeout=10.001)
 
-            # Check if the request was successful (status code 200)
-            response.raise_for_status()
-            # Get the JSON data from the response
-            movie_details = response.json()["data"]["movie"]
+                # Check if the request was successful (status code 200)
+                response.raise_for_status()
+                # Get the JSON data from the response
+                movie_details = json.loads(response.text)["data"]["movie"]
+            except requests.exceptions.RequestException as e:
+                print(f"Error de solicitud: {e}")
+            except json.JSONDecodeError as e:
+                print(f"Error al decodificar JSON: {e}")
 
             # Extract all genre names
             genre_names = [genre["name"] for genre in genres]
@@ -172,13 +193,18 @@ def handle_message(message):
             }
 
             # Make the API request
-            response = requests.get(base_url + endpoint,
-                                    params=params_en, timeout=10.001)
-            # Raise an exception if an error occurs with the API request in English
-            response.raise_for_status()
+            try:
+                response = requests.get(base_url + endpoint,
+                                        params=params_en, timeout=10.001)
+                # Raise an exception if an error occurs with the API request in English
+                response.raise_for_status()
 
-            # Get the JSON data from the response English
-            data = response.json()
+                # Get the JSON data from the response English
+                data = json.loads(response.text)
+            except requests.exceptions.RequestException as e:
+                print(f"Error de solicitud: {e}")
+            except json.JSONDecodeError as e:
+                print(f"Error al decodificar JSON: {e}")
 
             # Extract the list of movies from the response English
             results = data["results"]
@@ -196,13 +222,18 @@ def handle_message(message):
             api_url = f"https://api.themoviedb.org/3/configuration?api_key={api_key}"
 
             # Make a GET request to fetch the configuration details
-            response = requests.get(api_url, timeout=10.001)
-            if response.status_code != 200:
-                print("Failed to fetch configuration details")
-                exit()
+            try:
+                response = requests.get(api_url, timeout=10.001)
+                if response.status_code != 200:
+                    print("Failed to fetch configuration details")
+                    exit()
 
-            # Extract the base URL for images from the response
-            base_url = response.json()["images"]["secure_base_url"]
+                # Extract the base URL for images from the response
+                base_url = json.loads(response.text)["images"]["secure_base_url"]
+            except requests.exceptions.RequestException as e:
+                print(f"Error de solicitud: {e}")
+            except json.JSONDecodeError as e:
+                print(f"Error al decodificar JSON: {e}")
 
             # Initialize the best quality link and its width as None
             best_quality_link = None
