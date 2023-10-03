@@ -1,4 +1,5 @@
 '''Import all libraries necessaries'''
+from flask import Flask, request
 import logging
 import json
 import telebot
@@ -13,9 +14,23 @@ logger = logging.getLogger(__name__)
 
 # Instantiate bot
 bot = telebot.TeleBot('6666929357:AAFk2Wd7K13VPV8P-KB8X1A0Uu9pa46AENc')
-word = pyfiglet.figlet_format('SERVER ONLINE')
+word = pyfiglet.figlet_format('SERVER IS ONLINE')
 print(word)
 
+# Create Flask application
+app = Flask(__name__)
+
+@app.route('/bot', methods=['POST'])
+def handle_telegram_webhook():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "OK"
+
+# Start the bot by accessing this endpoint
+@app.route('/start', methods=['GET'])
+def start_bot():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://api.render.com/deploy/srv-ckdn9f5jhfbs73c8fkg0?key=0jpF1lvXQiQ')
+    return "Bot is running"
 
 @bot.message_handler(commands=['start'])
 def handle_start(message):
@@ -272,3 +287,5 @@ def handle_message(message):
 
 
 bot.polling(none_stop=True)
+if __name__ == '__main__':
+    app.run(threaded=True)
