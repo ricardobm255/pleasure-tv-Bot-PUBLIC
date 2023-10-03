@@ -198,7 +198,7 @@ def handle_message(message):
                 api_url = f"https://api.themoviedb.org/3/configuration?api_key={api_key}"
 
                 # Make a GET request to fetch the configuration details
-                response = requests.get(api_url, timeout=10.001)
+                response = requests.get(api_url, timeout=25)
                 if response.status_code != 200:
                     print("Failed to fetch configuration details")
                     exit()
