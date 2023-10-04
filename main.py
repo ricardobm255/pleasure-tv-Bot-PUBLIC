@@ -1,4 +1,5 @@
-'''Import all libraries necessaries'''
+'''Import all libraries necessaries'''
+import os
 import logging
 import json
 import telebot
@@ -11,8 +12,10 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
 # Instantiate bot
-bot = telebot.TeleBot('6666929357:AAFk2Wd7K13VPV8P-KB8X1A0Uu9pa46AENc')
+bot = telebot.TeleBot(BOT_TOKEN)
 word = pyfiglet.figlet_format('SERVER IS ONLINE')
 print(word)
 
