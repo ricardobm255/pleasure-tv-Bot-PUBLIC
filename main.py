@@ -1,10 +1,9 @@
-'''Archivo ejecutable'''
+'''Archivo principal'''
 import logging
 import os
 import sys
 import telebot
 import pyfiglet
-
 from src import get_first_movie_data, search_in_yts, search_image, format_data
 from config import BOT_TOKEN, NUM_CHARACTER
 
