@@ -21,6 +21,7 @@ bot = telebot.TeleBot(BOT_TOKEN)
 word = pyfiglet.figlet_format('SERVER IS ONLINE')
 print(word)
 
+
 @bot.message_handler(commands=['start'])
 def handle_start(message):
     '''Mensaje de bienvenida al usuario'''
@@ -32,7 +33,9 @@ def handle_start(message):
 
     bot.send_message(message.chat.id, welcome_message)
 
+
 def is_admin(chat_id, info=True):
+    """Funcion que evalua si es administrador para ejecuatr comandos especiales"""
     if chat_id in ADMIN_ID:
         return True
     else:
@@ -41,13 +44,16 @@ def is_admin(chat_id, info=True):
             bot.send_message(chat_id, "No estas autorizado", parse_mode="html")
         return False
 
+
 @bot.message_handler(commands=["restart"])
 def handle_restart(message):
     """Reinicia el bot"""
     logger.info("### Reiniciando el BOT ###\n")
-    bot.send_message(message.chat.id, "### Reiniciando el BOT ###", parse_mode="html")
+    bot.send_message(
+        message.chat.id, "### Reiniciando el BOT ###", parse_mode="html")
     bot.stop_polling()
     os.execv(sys.executable, [sys.executable] + sys.argv + sys.argv)
+
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
@@ -65,8 +71,10 @@ def handle_message(message):
             original_title = movie_data['original_title']
             other_title = movie_data["title"]
             year = movie_data["release_date"][:4]
-            original_language = format_data.formatting_language(movie_data["original_language"])
-            formatted_minutes = format_data.formatting_hours_minutes(movie_data["runtime"])
+            original_language = format_data.formatting_language(
+                movie_data["original_language"])
+            formatted_minutes = format_data.formatting_hours_minutes(
+                movie_data["runtime"])
             overview = movie_data["overview"]
             sub_overview = overview[:NUM_CHARACTER]
             imdb_id = movie_data["imdb_id"]
@@ -79,19 +87,20 @@ def handle_message(message):
             get_data = search_in_yts.get_movie_data(imdb_id)
             if get_data:
                 rating = get_data["rating"]
+                cast = ', '.join(cast['name']for cast in get_data['cast'][:4])
 
                 bot.send_photo(message.chat.id, photo=poster,
                                caption=f"📺 Título: {original_title}" '\n'
-                                        f"🖥 Otro Título: {other_title}" '\n'
-                                        f"📆 Año: {year}" '\n'
-                                        f"🎙 Audio: {original_language}" '\n'
-                                        f"🕰 Duración: {formatted_minutes}" '\n'
-                                        f"🌟 IMDb: {rating}" '\n'
-                                        f"🎟 Reparto: {', '.join([cast['name']for cast in get_data['cast'][:4]])}"'\n'
-                                        f"🔣 Géneros: #{' #'.join(genres)}"'\n''\n'
-                                        f"🏷 Sinopsis: {sub_overview}"'\n''\n'
-                                        f"▶️ DESCARGAR ▶️"'\n''\n'
-                                        f"⚠️ Subtítulo en los comentarios ⚠️")
+                               f"🖥 Otro Título: {other_title}" '\n'
+                               f"📆 Año: {year}" '\n'
+                               f"🎙 Audio: {original_language}" '\n'
+                               f"🕰 Duración: {formatted_minutes}" '\n'
+                               f"🌟 IMDb: {rating}" '\n'
+                               f"🎟 Reparto: {cast}"'\n'
+                               f"🔣 Géneros: #{' #'.join(genres)}"'\n''\n'
+                               f"🏷 Sinopsis: {sub_overview}"'\n''\n'
+                               f"▶️ DESCARGAR ▶️"'\n''\n'
+                               f"⚠️ Subtítulo en los comentarios ⚠️")
 
             message_torrent = search_in_yts.get_torrent_links(imdb_id)
             if message_torrent:
@@ -99,11 +108,14 @@ def handle_message(message):
                 for link, quality in message_torrent:
                     send_torrent += f"🥇 Calidad: {quality}\n🔗 Torrent Link: {link}"'\n''\n'
                 bot.send_message(message.chat.id, send_torrent)
-                logger.info("El usuario %s ha finalizado la búsqueda con exito", user)
-    except Exception as e:
-        logger.exception("Ocurrió un error durante la búsqueda de películas: %s", e)
+                logger.info(
+                    "El usuario %s ha finalizado la búsqueda con exito", user)
+    except Exception as error:
+        logger.exception(
+            "Ocurrió un error durante la búsqueda de películas: %s", error)
         error_message = "Ocurrió un error al buscar la película. Por favor, inténtalo nuevamente."
         bot.send_message(message.chat.id, error_message)
+
 
 if __name__ == '__main__':
     print("### Iniciando el Bot... ###")
