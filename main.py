@@ -12,7 +12,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-ADMIN_ID = (717325553,)
+ADMIN_ID = (YOUR ID,) # Escribe en esta tupla los id's de los admins del bot
 
 # Instantiate bot
 bot = telebot.TeleBot(BOT_TOKEN)
